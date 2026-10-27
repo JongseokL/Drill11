@@ -8,12 +8,16 @@ class AutoRun:
     START_SPEED = 5.0
     ACCELERATION = 0.05
     MAX_SPEED = 25.0
+    START_SIZE = 100.0
+    GROWTH = 0.2
+    MAX_SIZE = 200.0
 
     @staticmethod
     def enter(boy):
         boy.frame = 0
         boy.dir = boy.face_dir
         boy.auto_run_speed = AutoRun.START_SPEED
+        boy.auto_run_size = AutoRun.START_SIZE
 
     @staticmethod
     def update(boy):
@@ -23,13 +27,21 @@ class AutoRun:
             boy.auto_run_speed + AutoRun.ACCELERATION,
             AutoRun.MAX_SPEED
         )
+        boy.auto_run_size = min(
+            boy.auto_run_size + AutoRun.GROWTH,
+            AutoRun.MAX_SIZE
+        )
 
-        if boy.x <= 50:
-            boy.x = 50
+        half_width = boy.auto_run_size / 2
+        left = half_width
+        right = 800 - half_width
+
+        if boy.x <= left:
+            boy.x = left
             boy.dir = 1
             boy.face_dir = 1
-        elif boy.x >= 750:
-            boy.x = 750
+        elif boy.x >= right:
+            boy.x = right
             boy.dir = -1
             boy.face_dir = -1
 
@@ -38,7 +50,8 @@ class AutoRun:
         bottom = 100 if boy.dir == 1 else 0
         boy.image.clip_draw(
             boy.frame * 100, bottom, 100, 100,
-            boy.x, boy.y
+            boy.x, boy.y,
+            boy.auto_run_size, boy.auto_run_size
         )
 
 
