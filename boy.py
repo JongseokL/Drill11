@@ -85,7 +85,7 @@ class Boy:
             },
             {
                 'trigger': 'start_run',
-                'source': ['IDLE', 'SLEEP'],
+                'source': ['IDLE', 'SLEEP', 'AUTO_RUN'],
                 'dest': 'RUN',
                 'before': 'set_run_direction'
             },
@@ -141,7 +141,7 @@ class Boy:
         self.restart_idle_timer()
 
     def press_direction(self, direction):
-        if self.state == 'IDLE' or self.state == 'SLEEP':
+        if self.state in ['IDLE', 'SLEEP', 'AUTO_RUN']:
             self.start_run(direction)
         elif self.state == 'RUN':
             self.set_run_direction(direction)
