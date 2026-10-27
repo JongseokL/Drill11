@@ -7,7 +7,7 @@ from transitions import Machine
 class AutoRun:
     START_SPEED = 5.0
     ACCELERATION = 0.05
-    MAX_SPEED = 15.0
+    MAX_SPEED = 25.0
 
     @staticmethod
     def enter(boy):
