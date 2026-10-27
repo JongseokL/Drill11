@@ -4,6 +4,35 @@ from pico2d import get_time, load_image
 from transitions import Machine
 
 
+class AutoRun:
+    @staticmethod
+    def enter(boy):
+        boy.frame = 0
+        boy.dir = boy.face_dir
+
+    @staticmethod
+    def update(boy):
+        boy.frame = (boy.frame + 1) % 8
+        boy.x += boy.dir * 5
+
+        if boy.x <= 50:
+            boy.x = 50
+            boy.dir = 1
+            boy.face_dir = 1
+        elif boy.x >= 750:
+            boy.x = 750
+            boy.dir = -1
+            boy.face_dir = -1
+
+    @staticmethod
+    def draw(boy):
+        bottom = 100 if boy.dir == 1 else 0
+        boy.image.clip_draw(
+            boy.frame * 100, bottom, 100, 100,
+            boy.x, boy.y
+        )
+
+
 class Boy:
     def __init__(self):
         self.x, self.y = 400, 90
@@ -72,8 +101,7 @@ class Boy:
         self.restart_idle_timer()
 
     def begin_auto_run(self):
-        self.frame = 0
-        self.dir = self.face_dir
+        AutoRun.enter(self)
 
     def press_direction(self, direction):
         if self.state == 'IDLE' or self.state == 'SLEEP':
@@ -96,17 +124,7 @@ class Boy:
             self.x += self.dir * 5
             self.x = max(50, min(750, self.x))
         elif self.state == 'AUTO_RUN':
-            self.frame = (self.frame + 1) % 8
-            self.x += self.dir * 5
-
-            if self.x <= 50:
-                self.x = 50
-                self.dir = 1
-                self.face_dir = 1
-            elif self.x >= 750:
-                self.x = 750
-                self.dir = -1
-                self.face_dir = -1
+            AutoRun.update(self)
 
     def draw(self):
         if self.state == 'IDLE':
@@ -122,9 +140,11 @@ class Boy:
                 math.pi / 2, '',
                 self.x, 55, 100, 100
             )
-        elif self.state == 'RUN' or self.state == 'AUTO_RUN':
+        elif self.state == 'RUN':
             bottom = 100 if self.dir == 1 else 0
             self.image.clip_draw(
                 self.frame * 100, bottom, 100, 100,
                 self.x, self.y
             )
+        elif self.state == 'AUTO_RUN':
+            AutoRun.draw(self)
