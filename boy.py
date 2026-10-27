@@ -5,15 +5,24 @@ from transitions import Machine
 
 
 class AutoRun:
+    START_SPEED = 5.0
+    ACCELERATION = 0.05
+    MAX_SPEED = 15.0
+
     @staticmethod
     def enter(boy):
         boy.frame = 0
         boy.dir = boy.face_dir
+        boy.auto_run_speed = AutoRun.START_SPEED
 
     @staticmethod
     def update(boy):
         boy.frame = (boy.frame + 1) % 8
-        boy.x += boy.dir * 5
+        boy.x += boy.dir * boy.auto_run_speed
+        boy.auto_run_speed = min(
+            boy.auto_run_speed + AutoRun.ACCELERATION,
+            AutoRun.MAX_SPEED
+        )
 
         if boy.x <= 50:
             boy.x = 50
