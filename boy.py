@@ -18,9 +18,14 @@ class AutoRun:
         boy.dir = boy.face_dir
         boy.auto_run_speed = AutoRun.START_SPEED
         boy.auto_run_size = AutoRun.START_SIZE
+        boy.auto_run_start_time = get_time()
 
     @staticmethod
     def update(boy):
+        if get_time() - boy.auto_run_start_time >= 5.0:
+            boy.stop_auto_run()
+            return
+
         boy.frame = (boy.frame + 1) % 8
         boy.x += boy.dir * boy.auto_run_speed
         boy.auto_run_speed = min(
@@ -95,6 +100,12 @@ class Boy:
                 'source': 'IDLE',
                 'dest': 'AUTO_RUN',
                 'after': 'begin_auto_run'
+            },
+            {
+                'trigger': 'stop_auto_run',
+                'source': 'AUTO_RUN',
+                'dest': 'IDLE',
+                'after': 'finish_auto_run'
             }
         ]
 
@@ -124,6 +135,10 @@ class Boy:
 
     def begin_auto_run(self):
         AutoRun.enter(self)
+
+    def finish_auto_run(self):
+        self.dir = 0
+        self.restart_idle_timer()
 
     def press_direction(self, direction):
         if self.state == 'IDLE' or self.state == 'SLEEP':
